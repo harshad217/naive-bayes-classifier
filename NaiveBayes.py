@@ -3,6 +3,7 @@ __author__ = 'harshad'
 import numpy as np
 import scipy as sp
 import math
+from sklearn.naive_bayes import GaussianNB
 
 def calculateGnb(x,mean,var):
     first_term = float(1/math.sqrt(2 * math.pi * var))
@@ -40,21 +41,26 @@ def Main():
     label0_matrix = np.empty(shape=(0,len(training[0])-1))
     label1_matrix = np.empty(shape=(0,len(training[0])-1))
 
-    count0 = 0
-    count1 = 0
+    prior0 = 0
+    prior1 = 0
+    total_prior = len(training)
     for row in training:
         if row[len(training[0])-1] == 0:
             to_add_row = row[:len(row)-1]
             label0_matrix = np.vstack([label0_matrix,to_add_row])
-            count0 += 1
+            prior0 += 1
         elif row[len(training[0])-1] == 1:
             to_add_row = row[:len(row)-1]
             label1_matrix = np.vstack([label1_matrix,to_add_row])
-            count1 += 1
+            prior1 += 1
+
+    print 'prior label-0 probability = ', prior0, '/',total_prior
+    prior0_probability = float(float(prior0)/float(total_prior))
+    prior1_probability = float(float(prior1)/float(total_prior))
 
     print 'len of matrix of label 0s',len(label0_matrix)
     print 'len of matrix of label 1s',len(label1_matrix)
-    print 'label 1s and 0s = ', count0, count1
+    print 'label 1s and 0s = ', prior0, prior1
 
     '''init label0 mean list'''
     j=0
@@ -94,8 +100,8 @@ def Main():
 
     '''predict labels'''
     for i in range(len(testing)):
-        label0_gnb_product = 1
-        label1_gnb_product = 1
+        label0_gnb_product = prior0_probability
+        label1_gnb_product = prior1_probability
         for j in range(len(testing[0])-1):
             #calculate gnb for each feature for label1 and label0 and multiply all
             gnb0 = calculateGnb(testing[i,j],label0_mean_list[0,j],label0_var_list[0,j])
@@ -116,6 +122,18 @@ def Main():
             accuracy += 1
 
     print 'accuracy = ',float(float(accuracy)/float(len(predicted_results)))
+
+    clf = GaussianNB()
+    training_to_pass = np.delete(training,axis=1,obj=len(training[0])-1)
+    clf.fit(training_to_pass, training_truths)
+    testing_to_pass = np.delete(testing,axis=1,obj=len(testing[0])-1)
+    pack_results = clf.predict(testing_to_pass)
+
+    acc = 0
+    for i in range(len(pack_results)):
+        if pack_results[i] == testing_truths[i]:
+            acc += 1
+
+    print 'actual accuracy = ', float(float(acc)/float(len(testing_truths)))
 if __name__ == '__main__':
     Main()
-
