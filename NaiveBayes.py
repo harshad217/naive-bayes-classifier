@@ -23,15 +23,71 @@ def Main():
 
     training_truths_index = len(training[0]) - 1
     training_truths = training[:,training_truths_index]
-    print len(training_truths)
-    training = np.delete(training,training_truths_index,1)
-    print len(training[0])
+    print 'length of train truths = ',len(training_truths)
+    # training = np.delete(training,training_truths_index,1)
+    print 'length of training columns = ', len(training[0])
 
     testing_truths_index = len(testing[0]) - 1
     testing_truths = testing[:,testing_truths_index]
-    print len(testing_truths)
-    testing = np.delete(testing,testing_truths_index,1)
-    print len(testing[0])
+    print 'length of test truths = ',len(testing_truths)
+    # testing = np.delete(testing,testing_truths_index,1)
+    print 'length of test columns = ', len(testing[0])
+
+    label0_mean_list = np.zeros(shape=(1,len(training[0])-1))
+    label1_mean_list = np.zeros(shape=(1,len(training[0])-1))
+
+    label0_matrix = np.empty(shape=(0,len(training[0])-1))
+    label1_matrix = np.empty(shape=(0,len(training[0])-1))
+
+    count0 = 0
+    count1 = 0
+    for row in training:
+        if row[len(training[0])-1] == 0:
+            to_add_row = row[:len(row)-1]
+            label0_matrix = np.vstack([label0_matrix,to_add_row])
+            count0 += 1
+        elif row[len(training[0])-1] == 1:
+            to_add_row = row[:len(row)-1]
+            label1_matrix = np.vstack([label1_matrix,to_add_row])
+            count1 += 1
+
+    print 'len of matrix of label 0s',len(label0_matrix)
+    print 'len of matrix of label 1s',len(label1_matrix)
+    print 'label 1s and 0s = ', count0, count1
+
+    '''init label0 mean list'''
+    j=0
+    for each_column in label0_matrix.T:
+        label0_mean_list[0,j] = np.mean(each_column)
+        j = j + 1
+
+    '''init label1 mean list'''
+    j=0
+    for each_column in label1_matrix.T:
+        label1_mean_list[0,j] = np.mean(each_column)
+        j = j + 1
+
+    print label0_mean_list, 'len of label0 means = ', len(label0_mean_list[0])
+    print label1_mean_list, 'len of label1 means = ', len(label1_mean_list[0])
+
+    label0_var_list = np.zeros(shape=(1,len(training[0])-1))
+    label1_var_list = np.zeros(shape=(1,len(training[0])-1))
+
+    '''Init label0 variance list'''
+    j=0
+    for each_column in label0_matrix.T:
+        label0_var_list[0,j] = np.var(each_column)
+        j = j + 1
+
+    '''Init label1 variance list'''
+    j=0
+    for each_column in label1_matrix.T:
+        label1_var_list[0,j] = np.var(each_column)
+        j = j + 1
+
+    print 'label0 variance list length = ',len(label0_var_list[0])
+    print 'label1 variance list length = ',len(label1_var_list[0])
+    print label0_var_list
 
 
 if __name__ == '__main__':
