@@ -11,6 +11,7 @@ def calculateGnb(x,mean,var):
     fract = -float(num / denom)
     second_term = math.pow(math.e,fract)
     gnb = first_term * second_term
+    return gnb
 
 def Main():
     matrix = np.loadtxt('data/project3_dataset1.txt')
@@ -89,7 +90,32 @@ def Main():
     print 'label1 variance list length = ',len(label1_var_list[0])
     print label0_var_list
 
+    predicted_results = [ ]
 
+    '''predict labels'''
+    for i in range(len(testing)):
+        label0_gnb_product = 1
+        label1_gnb_product = 1
+        for j in range(len(testing[0])-1):
+            #calculate gnb for each feature for label1 and label0 and multiply all
+            gnb0 = calculateGnb(testing[i,j],label0_mean_list[0,j],label0_var_list[0,j])
+            label0_gnb_product = label0_gnb_product * gnb0
+            gnb1 = calculateGnb(testing[i,j],label1_mean_list[0,j],label1_var_list[0,j])
+            label1_gnb_product = label1_gnb_product * gnb1
+
+        if gnb0 > gnb1:
+            predicted_results.insert(i,0)
+        else:
+            predicted_results.insert(i,1)
+
+    print len(predicted_results)
+    print len(testing_truths)
+    accuracy = 0
+    for i in range(len(predicted_results)):
+        if predicted_results[i] == testing_truths[i]:
+            accuracy += 1
+
+    print 'accuracy = ',float(float(accuracy)/float(len(predicted_results)))
 if __name__ == '__main__':
     Main()
 
