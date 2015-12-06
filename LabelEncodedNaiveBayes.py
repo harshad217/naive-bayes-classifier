@@ -4,6 +4,7 @@ import numpy as np
 import scipy as sp
 import math
 from sklearn.naive_bayes import GaussianNB
+from sklearn import preprocessing
 
 def calculateGnb(x,mean,var):
     first_term = float(1)/float(math.sqrt(2 * math.pi * var))
@@ -14,10 +15,54 @@ def calculateGnb(x,mean,var):
     gnb = float(first_term) * float(second_term)
     return gnb
 
+def loadData(path):
+    file = open(name=path,mode='r')
+    content = file.read()
+    lines = content.split('\n')
+    # print type((lines[0].split())[3])
+    cols = []
+    for x in range(len(lines)):
+        cols.append([])
+
+    matrix = np.ndarray(shape=(len(lines),len((lines[0].split()))))
+    col_indexes = set()
+    fs = 0
+    for i in range(len(lines)):
+        features = lines[i].split()
+        fs = len(features)
+        for j in range(len(features)):
+            cols[i].append(features[j])
+            if features[j].isalpha():
+                col_indexes.add(j)
+
+    print 'cols = ', col_indexes
+
+    for each in col_indexes:
+        le = preprocessing.LabelEncoder()
+        list_to_pass = []
+
+        for i in range(len(lines)):
+            list_to_pass.append(cols[i][each])
+
+        le.fit(list_to_pass)
+        print le.classes_
+        fitted_list = le.transform(list_to_pass)
+
+        print fitted_list
+
+        for i in range(len(lines)):
+            cols[i][each] = fitted_list[i]
+
+    matrix = np.asanyarray(cols,dtype=float)
+    return matrix
+
 def Main():
-    matrix = np.loadtxt('data/dataset1.txt')
-    
+    # matrix = np.loadtxt('data/dataset1.txt')
+    # path = 'data/' + raw_input('Enter the file name')
+    path = 'data/dataset2.txt'
+    matrix = loadData(path)
     original_matrix = matrix
+    print matrix[(0,1,2),:]
     # indexes = np.random.permutation(matrix.shape[0])
     indexes = range(matrix.shape[0])
     partition = int(len(matrix) * 0.7)
