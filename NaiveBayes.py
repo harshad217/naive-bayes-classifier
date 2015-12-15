@@ -167,6 +167,7 @@ def tenCrossValidation(matrix, truths):
     return
 
 def Main():
+    print 'for dataset1..'
     matrix = np.loadtxt('data/dataset1.txt')
     if raw_input('want 10 cross validation for dataset1 ?') == 'yes':
         '''ten cross validation if required'''
@@ -207,8 +208,6 @@ def Main():
         prior0 = 0
         prior1 = 0
         total_prior = len(training)
-        print 'shit = ',training_matrix[:,len(training_matrix[0])-1]
-        print 'shit complete'
         '''create label0 data matrix and label1 data matrix'''
         label0_matrix = training_matrix[np.ix_(training_matrix[:,len(training_matrix[0])-1] == 0, range(len(training_matrix[0])-1))]
 
