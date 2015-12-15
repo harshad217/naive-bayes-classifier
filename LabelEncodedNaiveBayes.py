@@ -211,6 +211,7 @@ def tenCrossValidation(matrix,truths):
 def Main():
     # matrix = np.loadtxt('data/dataset1.txt')
     # path = 'data/' + raw_input('Enter the file name')
+    print 'for dataset2..'
     path = 'data/dataset2.txt'
     matrix = loadData(path)
     if raw_input('Want 10 cross validation?') == 'yes':
@@ -334,7 +335,7 @@ def Main():
             if predicted_results[i] == testing_truths[i]:
                 accuracy += 1
 
-        print 'accuracy = ',float(accuracy)/float(len(predicted_results))
+        print 'my_implementation_accuracy = ',float(accuracy)/float(len(predicted_results))
 
         clf = GaussianNB()
         clf.fit(training, training_truths)
@@ -346,7 +347,7 @@ def Main():
             if pack_results[i] == testing_truths[i]:
                 acc += 1
 
-        print 'actual accuracy = ', float(float(acc)/float(len(testing_truths)))
+        print 'scikit_accuracy = ', float(float(acc)/float(len(testing_truths)))
 
 if __name__ == '__main__':
     Main()
